@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Nassim Nurikabe</title>
+    <link rel="stylesheet" href="style/board.css" />
+    <link rel="stylesheet" href="style/square.css" />
+    <link rel="stylesheet" href="style/text-square.css" />
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div id="game-board"></div>
+    <script>
+      var BOARD_1 = [
+        [0, 0, 0, 0, 2, 0, 0],
+        [0, 0, 0, 0, 0, 2, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 6, 0, 0, 0, 0, 4],
+        [0, 0, 2, 0, 0, 0, 0],
+        [0, 0, 0, 0, 2, 0, 2],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 9, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [2, 0, 0, 0, 0, 0, 0]
+      ];
+
+      var gameBoard = document.getElementById("game-board");
+      gameBoard.setAttribute("class", "board");
+
+      var rows = BOARD_1.length;
+      var cols = BOARD_1[0].length;
+      for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < cols; j++) {
+          var item = document.createElement("div");
+          var node = document.createTextNode(BOARD_1[i][j]);
+          item.appendChild(node);
+          item.setAttribute("class", "square");
+          gameBoard.appendChild(item);
+        }
+        var newLine = document.createElement("br");
+        gameBoard.appendChild(newLine);
+      }
+    </script>
+  </body>
+</html>
