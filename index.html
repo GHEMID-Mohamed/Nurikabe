@@ -5,11 +5,11 @@
     <title>Nassim Nurikabe</title>
     <link rel="stylesheet" href="style/board.css" />
     <link rel="stylesheet" href="style/square.css" />
-    <link rel="stylesheet" href="style/text-square.css" />
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="style/buttons.css" />
   </head>
   <body>
     <div id="game-board"></div>
+    <div id="options"></div>
     <script>
       var BOARD_1 = [
         [0, 0, 0, 0, 2, 0, 0],
@@ -25,22 +25,58 @@
         [2, 0, 0, 0, 0, 0, 0]
       ];
 
+      var isIland = content => Boolean(BOARD_1[i][j]);
+
       var gameBoard = document.getElementById("game-board");
       gameBoard.setAttribute("class", "board");
+
+      function setListner(i, j) {
+        return function() {
+          var el = document.getElementById(i + "-" + j);
+          var color = el.className.includes("square-unselected")
+            ? "square-selected"
+            : "square-unselected";
+          el.setAttribute("class", "square col-7 " + color);
+        };
+      }
 
       var rows = BOARD_1.length;
       var cols = BOARD_1[0].length;
       for (var i = 0; i < rows; i++) {
+        var row = document.createElement("div");
+        row.setAttribute("class", "row");
         for (var j = 0; j < cols; j++) {
           var item = document.createElement("div");
-          var node = document.createTextNode(BOARD_1[i][j]);
-          item.appendChild(node);
-          item.setAttribute("class", "square");
-          gameBoard.appendChild(item);
+          item.setAttribute("class", "square square-unselected col-7");
+          item.setAttribute("id", i + "-" + j);
+          var _content = BOARD_1[i][j] || "\xa0";
+          var content = document.createTextNode(_content);
+          item.appendChild(content);
+          if (!isIland(BOARD_1[i][j])) {
+            item.addEventListener("click", setListner(i, j), false);
+          }
+          row.appendChild(item);
         }
-        var newLine = document.createElement("br");
-        gameBoard.appendChild(newLine);
+        gameBoard.appendChild(row);
       }
+
+      // set options
+      var options = document.getElementById("options");
+      var newButton = document.createElement("button");
+      newButton.setAttribute("class", "option-button");
+      var content = document.createTextNode("New");
+      newButton.appendChild(content);
+      var checkButton = document.createElement("button");
+      checkButton.setAttribute("class", "option-button");
+      var content = document.createTextNode("check");
+      checkButton.appendChild(content);
+      var resetButton = document.createElement("button");
+      resetButton.setAttribute("class", "option-button");
+      var content = document.createTextNode("reset");
+      resetButton.appendChild(content);
+      options.appendChild(newButton);
+      options.appendChild(checkButton);
+      options.appendChild(resetButton);
     </script>
   </body>
 </html>
