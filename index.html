@@ -9,28 +9,13 @@
   </head>
   <body>
     <div id="game-board"></div>
-    <div id="options"></div>
+    <div id="options">
+      <label id="minutes">00</label>:<label id="seconds">00</label>
+    </div>
     <script>
-      var BOARD_1 = [
-        [0, 0, 0, 0, 2, 0, 0],
-        [0, 0, 0, 0, 0, 2, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 6, 0, 0, 0, 0, 4],
-        [0, 0, 2, 0, 0, 0, 0],
-        [0, 0, 0, 0, 2, 0, 2],
-        [0, 0, 0, 0, 0, 0, 0],
-        [0, 9, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0],
-        [2, 0, 0, 0, 0, 0, 0]
-      ];
+      var isIland = content => Boolean(content);
 
-      var isIland = content => Boolean(BOARD_1[i][j]);
-
-      var gameBoard = document.getElementById("game-board");
-      gameBoard.setAttribute("class", "board");
-
-      function setListner(i, j) {
+      function setSquareListner(i, j) {
         return function() {
           var el = document.getElementById(i + "-" + j);
           var color = el.className.includes("square-unselected")
@@ -40,24 +25,96 @@
         };
       }
 
-      var rows = BOARD_1.length;
-      var cols = BOARD_1[0].length;
-      for (var i = 0; i < rows; i++) {
-        var row = document.createElement("div");
-        row.setAttribute("class", "row");
-        for (var j = 0; j < cols; j++) {
-          var item = document.createElement("div");
-          item.setAttribute("class", "square square-unselected col-7");
-          item.setAttribute("id", i + "-" + j);
-          var _content = BOARD_1[i][j] || "\xa0";
-          var content = document.createTextNode(_content);
-          item.appendChild(content);
-          if (!isIland(BOARD_1[i][j])) {
-            item.addEventListener("click", setListner(i, j), false);
-          }
-          row.appendChild(item);
+      var boards = {
+        1: [
+          [0, 0, 0, 0, 2, 0, 0],
+          [0, 0, 0, 0, 0, 2, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 6, 0, 0, 0, 0, 4],
+          [0, 0, 2, 0, 0, 0, 0],
+          [0, 0, 0, 0, 2, 0, 2],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 9, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [2, 0, 0, 0, 0, 0, 0]
+        ],
+        2: [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 2, 0, 2, 0, 2, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 2, 0, 0, 0, 0, 2],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 2, 0, 2, 0, 4, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 3, 0, 0, 2, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 4]
+        ]
+      };
+
+      var BOARD;
+      var currentBoard = 1;
+      var maxBoardsNumber = Object.keys(boards).length;
+
+      // initial game
+      drawBoard(boards[currentBoard]);
+
+      function reset() {
+        var squares = document.querySelectorAll(".square");
+        squares.forEach(square => {
+          square.setAttribute("class", "square square-unselected col-7");
+        });
+      }
+
+      function newGame() {
+        currentBoard++;
+        if (currentBoard > maxBoardsNumber) {
+          currentBoard = 1;
         }
-        gameBoard.appendChild(row);
+        var gameBoard = document.getElementById("game-board");
+        gameBoard.innerHTML = "";
+        drawBoard(boards[currentBoard]);
+        BOARD = [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 9, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ];
+        reset();
+      }
+
+      // Drawing the board
+      function drawBoard(board) {
+        var gameBoard = document.getElementById("game-board");
+        gameBoard.setAttribute("class", "board");
+        var rows = board.length;
+        var cols = board[0].length;
+        for (var i = 0; i < rows; i++) {
+          var row = document.createElement("div");
+          row.setAttribute("class", "row");
+          for (var j = 0; j < cols; j++) {
+            var item = document.createElement("div");
+            item.setAttribute("class", "square square-unselected col-7");
+            item.setAttribute("id", i + "-" + j);
+            var _content = board[i][j] || "\xa0";
+            var content = document.createTextNode(_content);
+            item.appendChild(content);
+            if (!isIland(board[i][j])) {
+              item.addEventListener("click", setSquareListner(i, j), false);
+            }
+            row.appendChild(item);
+          }
+          gameBoard.appendChild(row);
+        }
       }
 
       // set options
@@ -65,18 +122,44 @@
       var newButton = document.createElement("button");
       newButton.setAttribute("class", "option-button");
       var content = document.createTextNode("New");
+      newButton.addEventListener("click", () => newGame());
       newButton.appendChild(content);
+
       var checkButton = document.createElement("button");
       checkButton.setAttribute("class", "option-button");
       var content = document.createTextNode("check");
       checkButton.appendChild(content);
+
       var resetButton = document.createElement("button");
       resetButton.setAttribute("class", "option-button");
       var content = document.createTextNode("reset");
+      resetButton.addEventListener("click", () => reset());
       resetButton.appendChild(content);
+
       options.appendChild(newButton);
       options.appendChild(checkButton);
       options.appendChild(resetButton);
+
+      // Timer
+      var minutesLabel = document.getElementById("minutes");
+      var secondsLabel = document.getElementById("seconds");
+      var totalSeconds = 0;
+      setInterval(setTime, 1000);
+
+      function setTime() {
+        ++totalSeconds;
+        secondsLabel.innerHTML = pad(totalSeconds % 60);
+        minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
+      }
+
+      function pad(val) {
+        var valString = val + "";
+        if (valString.length < 2) {
+          return "0" + valString;
+        } else {
+          return valString;
+        }
+      }
     </script>
   </body>
 </html>
