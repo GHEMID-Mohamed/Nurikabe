@@ -13,18 +13,6 @@
       <label id="minutes">00</label>:<label id="seconds">00</label>
     </div>
     <script>
-      var isIland = content => Boolean(content);
-
-      function setSquareListner(i, j) {
-        return function() {
-          var el = document.getElementById(i + "-" + j);
-          var color = el.className.includes("square-unselected")
-            ? "square-selected"
-            : "square-unselected";
-          el.setAttribute("class", "square col-7 " + color);
-        };
-      }
-
       var boards = {
         1: [
           [0, 0, 0, 0, 2, 0, 0],
@@ -54,14 +42,102 @@
         ]
       };
 
-      var BOARD;
+      var boards_solution = {
+        1: [
+          [1, 1, 1, 0, 0, 1, 1],
+          [1, 0, 1, 1, 1, 0, 1],
+          [1, 0, 0, 0, 1, 0, 1],
+          [1, 0, 1, 1, 1, 1, 1],
+          [1, 0, 1, 0, 0, 0, 0],
+          [1, 1, 0, 1, 1, 1, 1],
+          [0, 1, 0, 1, 0, 1, 0],
+          [0, 1, 1, 1, 0, 1, 0],
+          [0, 0, 0, 0, 1, 1, 1],
+          [1, 1, 1, 0, 0, 0, 1],
+          [0, 0, 1, 1, 1, 1, 1]
+        ],
+        2: [
+          [1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 1, 0, 1, 0, 1],
+          [1, 0, 1, 0, 1, 0, 1],
+          [1, 1, 1, 1, 1, 1, 0],
+          [1, 0, 0, 1, 0, 1, 0],
+          [1, 1, 1, 1, 0, 0, 1],
+          [0, 0, 1, 0, 1, 0, 1],
+          [1, 1, 1, 0, 1, 1, 1],
+          [1, 0, 0, 1, 0, 0, 1],
+          [1, 0, 1, 1, 1, 1, 1],
+          [1, 1, 1, 0, 0, 0, 0]
+        ]
+      };
+
+      var BOARD = [
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0]
+      ];
       var currentBoard = 1;
       var maxBoardsNumber = Object.keys(boards).length;
 
-      // initial game
-      drawBoard(boards[currentBoard]);
+      // Timer
+      var minutesLabel = document.getElementById("minutes");
+      var secondsLabel = document.getElementById("seconds");
+      var totalSeconds = 0;
+      setInterval(setTime, 1000);
+
+      function setTime() {
+        ++totalSeconds;
+        secondsLabel.innerHTML = pad(totalSeconds % 60);
+        minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
+      }
+
+      function pad(val) {
+        var valString = val + "";
+        if (valString.length < 2) {
+          return "0" + valString;
+        } else {
+          return valString;
+        }
+      }
+
+      var isIland = content => Boolean(content);
+
+      function setSquareListner(i, j) {
+        return function() {
+          var el = document.getElementById(i + "-" + j);
+          var color = el.className.includes("square-unselected")
+            ? "square-selected"
+            : "square-unselected";
+          var value = el.className.includes("square-unselected") ? 1 : 0;
+          BOARD[i][j] = value;
+          console.log(BOARD);
+          el.setAttribute("class", "square col-7 " + color);
+        };
+      }
 
       function reset() {
+        totalSeconds = 0;
+        BOARD = [
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0, 0]
+        ];
         var squares = document.querySelectorAll(".square");
         squares.forEach(square => {
           square.setAttribute("class", "square square-unselected col-7");
@@ -76,19 +152,6 @@
         var gameBoard = document.getElementById("game-board");
         gameBoard.innerHTML = "";
         drawBoard(boards[currentBoard]);
-        BOARD = [
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 9, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 0, 0, 0]
-        ];
         reset();
       }
 
@@ -117,6 +180,30 @@
         }
       }
 
+      function check() {
+        let valid = true;
+        for (var p = 0; p < BOARD.length; p++) {
+          for (var o = 0; o < boards_solution[currentBoard].length; o++) {
+            if (
+              BOARD[p][0] == boards_solution[currentBoard][o][0] &&
+              BOARD[p][1] == boards_solution[currentBoard][o][1]
+            ) {
+              //
+            } else {
+              valid = false;
+            }
+          }
+        }
+        if (valid) {
+          alert("Congratulations ! Nurikabe solved");
+        } else {
+          alert("Wrong :(");
+        }
+      }
+
+      // initial game
+      drawBoard(boards[currentBoard]);
+
       // set options
       var options = document.getElementById("options");
       var newButton = document.createElement("button");
@@ -127,6 +214,7 @@
 
       var checkButton = document.createElement("button");
       checkButton.setAttribute("class", "option-button");
+      checkButton.addEventListener("click", () => check());
       var content = document.createTextNode("check");
       checkButton.appendChild(content);
 
@@ -139,27 +227,6 @@
       options.appendChild(newButton);
       options.appendChild(checkButton);
       options.appendChild(resetButton);
-
-      // Timer
-      var minutesLabel = document.getElementById("minutes");
-      var secondsLabel = document.getElementById("seconds");
-      var totalSeconds = 0;
-      setInterval(setTime, 1000);
-
-      function setTime() {
-        ++totalSeconds;
-        secondsLabel.innerHTML = pad(totalSeconds % 60);
-        minutesLabel.innerHTML = pad(parseInt(totalSeconds / 60));
-      }
-
-      function pad(val) {
-        var valString = val + "";
-        if (valString.length < 2) {
-          return "0" + valString;
-        } else {
-          return valString;
-        }
-      }
     </script>
   </body>
 </html>
