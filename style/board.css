@@ -1,13 +1,8 @@
-.board {
-  /* display: flex;
-  flex-wrap: wrap; */
-}
-
 .row {
   display: flex;
 }
 
 .col-7 {
   display: inline-block;
-  /* width: 100%; */
 }
+
